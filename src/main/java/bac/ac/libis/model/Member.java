@@ -6,12 +6,13 @@ public class Member {
     private String firstName;
     private String lastName;
     private String email;
+    private String phoneNumber;
     private String password;
 
     public Member() {
     }
 
-    public Member(int memberId, String firstName, String lastName, String email, String password) {
+    public Member(int memberId, String firstName, String lastName, String email,String phoneNumber ,String password) {
         this.memberId = memberId;
         this.firstName = firstName;
         this.lastName = lastName;
