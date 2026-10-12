@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <%--@elvariable id="books" type="java.util.List<bac.ac.libis.model.Book>"--%>
 <%--@elvariable id="loggedInMember" type="bac.ac.libis.model.Member"--%>
 
@@ -57,17 +58,16 @@
                         </c:choose>
                     </td>
                     <td class="actions">
-                        <a href="#">Search</a>
+                        <a href="search-servlet">Search</a>
                         <a href="#">Borrow</a>
                         <a href="#">Reserve</a>
                     </td>
                 </tr>
-            </c:forEach>
-            </tbody>
+            </c:forEach>            </tbody>
         </table>
     </div>
 
-    <a class="btn-link" href="Search.jsp">Search</a>
+    <a class="btn-link" href="search-servlet">Search</a>
 
 </div>
 

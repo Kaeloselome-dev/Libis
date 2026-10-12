@@ -19,7 +19,7 @@
         </div>
     </c:if>
 
-    <form action="login-servlet" method="Post">
+    <form action="login-controller" method="Post">
         <div class="field">
             <label for="email">Email</label>
             <input type="text" id="email" name="email" autocomplete="email" required>
@@ -31,7 +31,7 @@
         </div>
 
         <button type="submit">Sign in</button>
-        <p class="message">Not registered? <a href="Signup.jsp">Create an account</a></p>
+        <p class="message">Not registered? <a href="signup-servlet">Create an account</a></p>
     </form>
 </div>
 
