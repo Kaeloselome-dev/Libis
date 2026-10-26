@@ -32,6 +32,8 @@ public class LoginController extends HttpServlet {
                     break;
                 }
             }
+
+
         }
 
         if (authenticatedMember != null) {
