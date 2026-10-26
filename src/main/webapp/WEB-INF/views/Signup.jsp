@@ -1,16 +1,16 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign in</title>
+    <title>Sign up</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/styles.css">
 </head>
 <body>
 
 <div class="card">
-    <h1>Sign in</h1>
+    <h1>Create an account</h1>
     <p class="subtitle">Access your card, holds, and loans</p>
 
     <c:if test="${not empty errorMessage}">
@@ -19,7 +19,7 @@
         </div>
     </c:if>
 
-    <form action="signup-servlet" method="Post">
+    <form action="signup" method="Post">
         <div class="field">
             <label for="firstname">Firstname</label>
             <input type="text" id="firstname" name="firstname" autocomplete="firstname" required>
@@ -42,10 +42,10 @@
 
         <div class="field">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" autocomplete="current-password" required>
+            <input type="password" id="password" name="password" autocomplete="new-password" required>
         </div>
 
-        <button type="submit">Sign in</button>
+        <button type="submit">Sign up</button>
     </form>
 </div>
 

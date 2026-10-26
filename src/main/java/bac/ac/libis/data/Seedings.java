@@ -6,7 +6,7 @@ import bac.ac.libis.model.Member;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Librarydata {
+public class Seedings {
 
 
     public static final List<Book> books = new ArrayList<>();

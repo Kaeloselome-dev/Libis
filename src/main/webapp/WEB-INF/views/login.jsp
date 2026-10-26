@@ -1,4 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,7 +19,7 @@
         </div>
     </c:if>
 
-    <form action="login-controller" method="Post">
+    <form action="login" method="Post">
         <div class="field">
             <label for="email">Email</label>
             <input type="text" id="email" name="email" autocomplete="email" required>
@@ -31,7 +31,7 @@
         </div>
 
         <button type="submit">Sign in</button>
-        <p class="message">Not registered? <a href="signup-servlet">Create an account</a></p>
+        <p class="message">Not registered? <a href="signup">Create an account</a></p>
     </form>
 </div>
 

@@ -1,10 +1,9 @@
 package bac.ac.libis.controllers;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import bac.ac.libis.data.Librarydata;
+import bac.ac.libis.data.Seedings;
 import bac.ac.libis.model.Member;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,11 +17,6 @@ import java.io.IOException;
 
 import bac.ac.libis.model.Book;
 
-import jakarta.servlet.http.*;
-
-import jakarta.servlet.annotation.*;
-
-
 
 @WebServlet(name = "catalogue_controller", value = "/catalogue")
 public class CatalogueController extends HttpServlet {
@@ -30,28 +24,46 @@ public class CatalogueController extends HttpServlet {
 
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
         response.setContentType("text/html");
         Member member = (Member) request.getSession().getAttribute("loggedInMember");
         request.setAttribute("loggedInMember", member);
         String search = request.getParameter("search");
+        String filterBy = request.getParameter("filterBy");
 
         List<Book> results;
 
         if (search == null || search.isBlank()) {
-            results = Librarydata.books;
+            results = Seedings.books;
         } else {
             results = new ArrayList<>();
             String term = search.trim().toLowerCase();
 
-            for (Book b : Librarydata.books) {
-                if (b.getTitle().toLowerCase().contains(term)) {
+            for (Book b : Seedings.books) {
+                boolean titleMatch = b.getTitle().toLowerCase().contains(term);
+                boolean authorMatch = b.getAuthor().toLowerCase().contains(term);
+                boolean genreMatch = b.getGenre().toLowerCase().contains(term);
+
+                boolean match;
+                if ("title".equals(filterBy)) {
+                    match = titleMatch;
+                } else if ("author".equals(filterBy)) {
+                    match = authorMatch;
+                } else if ("genre".equals(filterBy)) {
+                    match = genreMatch;
+                } else {
+                    // "all" or no filter chosen
+                    match = titleMatch || authorMatch || genreMatch;
+                }
+
+                if (match) {
                     results.add(b);
                 }
             }
         }
 
         request.setAttribute("books", results);
-        request.getRequestDispatcher("/WEB-INF/views/welcome.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/Welcome.jsp").forward(request, response);
 
     }
 

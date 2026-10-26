@@ -197,6 +197,10 @@ input:-webkit-autofill:focus {
     margin: 0;
 }
 
+.catalogue-page .search-bar {
+    margin-bottom: 24px;
+}
+
 .results-area {
     margin-top: 28px;
     display: flex;
