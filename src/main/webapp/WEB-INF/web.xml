@@ -9,12 +9,54 @@
     </welcome-file-list>
 
 
-    <filter>
-        <filter-name>AuthenticationFilter</filter-name>
-        <filter-class>bac.ac.libis.filter.AuthenticationFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>AuthenticationFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    <security-role>
+        <role-name>member</role-name>
+    </security-role>
+
+    <security-role>
+        <role-name>librarian</role-name>
+    </security-role>
+
+    <!-- Catalogue: both roles -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Catalogue</web-resource-name>
+            <url-pattern>/catalogue</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>member</role-name>
+            <role-name>librarian</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <!-- Member-only pages -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Member Pages</web-resource-name>
+            <url-pattern>/member/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>member</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <!-- Librarian-only pages -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Librarian Pages</web-resource-name>
+            <url-pattern>/librarian/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>librarian</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <!-- FORM challenges enter LoginController; POST uses request.login() against the Realm. -->
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <form-login-config>
+            <form-login-page>/login</form-login-page>
+            <form-error-page>/WEB-INF/views/login-error.jsp</form-error-page>
+        </form-login-config>
+    </login-config>
 </web-app>

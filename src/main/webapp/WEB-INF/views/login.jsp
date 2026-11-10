@@ -1,3 +1,4 @@
+
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,23 +16,43 @@
 
     <c:if test="${not empty errorMessage}">
         <div class="alert" role="alert">
-                ${errorMessage}
+            <c:out value="${errorMessage}" />
         </div>
     </c:if>
 
-    <form action="login" method="Post">
+    <form action="${pageContext.request.contextPath}/login"
+          method="POST">
+
         <div class="field">
-            <label for="email">Email</label>
-            <input type="text" id="email" name="email" autocomplete="email" required>
+            <label for="username">Username</label>
+            <input
+                    type="text"
+                    id="username"
+                    name="j_username"
+                    autocomplete="username"
+                    required
+            >
         </div>
 
         <div class="field">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" autocomplete="current-password" required>
+            <input
+                    type="password"
+                    id="password"
+                    name="j_password"
+                    autocomplete="current-password"
+                    required
+            >
         </div>
 
         <button type="submit">Sign in</button>
-        <p class="message">Not registered? <a href="signup">Create an account</a></p>
+
+        <p class="message">
+            Not registered?
+            <a href="${pageContext.request.contextPath}/signup">
+                Create an account
+            </a>
+        </p>
     </form>
 </div>
 

@@ -28,11 +28,11 @@ public class Seedings {
 
 
 
-        members.add(new Member(1001, "Kaelo", "Selome", "Kaelo@gmail.com","", "Kaelo12345"));
-        members.add(new Member(1002, "Tom", "Doe", "Tom@gmail.com","", "password"));
-        members.add(new Member(1003, "John", "Doe", "John@gmail.com", "","password"));
-        members.add(new Member(1004, "Bob", "Doe", "Bob@gmail.com", "","password"));
-        members.add(new Member(1005, "Rasta", "Doe", "Rasta@gmail.com", "","password"));
+        members.add(new Member(1001, "Kaelo", "Kaelo", "Selome", "Kaelo@gmail.com","+26773442232", "Kaelo12345", "member"));
+        members.add(new Member(1002,"Tom", "Tom", "Doe", "Tom@gmail.com","+26774658897", "password", "member"));
+        members.add(new Member(1003,"John", "John", "Doe", "John@gmail.com", "+26779885644","password", "member"));
+        members.add(new Member(1004,"Bob", "Bob", "Doe", "Bob@gmail.com", "+26778332243","password", "member"));
+        members.add(new Member(1005,"R_Doe", "Rasta", "Doe", "Rasta@gmail.com", "+26771232345","password", "member"));
 
 }
 }

@@ -3,61 +3,50 @@ package bac.ac.libis.model;
 import java.time.LocalDate;
 
 public class Loan {
-   private int Loanid;
-    private  int Memberid;
-    private int Bookid;
+
+    private int loanId;
+    private int memberId;
+    private int bookId;
     private Book book;
     private LocalDate borrowedOn;
-    private  LocalDate returnedOn;
-    private String Description;
-
-
-    public Loan(int loanid, int memberid, int bookid, Book book, LocalDate borrowedOn, LocalDate returnedOn, String description, boolean isReturned) {
-        Loanid = loanid;
-        Memberid = memberid;
-        Bookid = bookid;
-        this.book = book;
-        borrowedOn = borrowedOn;
-        returnedOn = returnedOn;
-        Description = description;
-
-    }
+    private LocalDate returnedOn;
 
     public Loan() {
     }
 
-    public int getLoanid() {
-        return Loanid;
+    public Loan(int loanId, int memberId, int bookId,
+                Book book, LocalDate borrowedOn,
+                LocalDate returnedOn) {
+        this.loanId = loanId;
+        this.memberId = memberId;
+        this.bookId = bookId;
+        this.book = book;
+        this.borrowedOn = borrowedOn;
+        this.returnedOn = returnedOn;
     }
 
-    public void setLoanid(int loanid) {
-        Loanid = loanid;
+    public int getLoanId() {
+        return loanId;
     }
 
-    public int getMemberid() {
-        return Memberid;
+    public void setLoanId(int loanId) {
+        this.loanId = loanId;
     }
 
-    public void setMemberid(int memberid) {
-        Memberid = memberid;
+    public int getMemberId() {
+        return memberId;
     }
 
-    public int getBookid() {
-        return Bookid;
+    public void setMemberId(int memberId) {
+        this.memberId = memberId;
     }
 
-    public void setBookid(int bookid) {
-        Bookid = bookid;
+    public int getBookId() {
+        return bookId;
     }
 
-
-
-    public String getDescription() {
-        return Description;
-    }
-
-    public void setDescription(String description) {
-        Description = description;
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
     }
 
     public Book getBook() {
@@ -66,6 +55,22 @@ public class Loan {
 
     public void setBook(Book book) {
         this.book = book;
+    }
+
+    public LocalDate getBorrowedOn() {
+        return borrowedOn;
+    }
+
+    public void setBorrowedOn(LocalDate borrowedOn) {
+        this.borrowedOn = borrowedOn;
+    }
+
+    public LocalDate getReturnedOn() {
+        return returnedOn;
+    }
+
+    public void setReturnedOn(LocalDate returnedOn) {
+        this.returnedOn = returnedOn;
     }
 
     public boolean isReturned() {

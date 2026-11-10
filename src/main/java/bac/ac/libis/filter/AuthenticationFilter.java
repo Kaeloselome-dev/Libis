@@ -1,3 +1,5 @@
+
+/*
 package bac.ac.libis.filter;
 
 import java.io.IOException;
@@ -35,3 +37,4 @@ public class AuthenticationFilter implements Filter {
         }
     }
 }
+*/

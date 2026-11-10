@@ -23,14 +23,16 @@ public class SignupController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String username = request.getParameter("username");
         String firstName = request.getParameter("firstname");
         String lastName = request.getParameter("lastname");
         String phoneNumber = request.getParameter("phoneNumber");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
+        String role = "Student";
 
         if (firstName != null && !firstName.isBlank() && email != null && !email.isBlank()) {
-            Member newMember = new Member(Seedings.members.size() + 1001, firstName, lastName, email, phoneNumber, password);
+            Member newMember = new Member(Seedings.members.size() + 1001, username, firstName, lastName, email, phoneNumber, password, role);
             Seedings.members.add(newMember);
 
             request.getSession().setAttribute("loggedInMember", newMember);

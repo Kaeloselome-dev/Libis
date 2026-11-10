@@ -7,6 +7,7 @@ public class Book {
     private String author;
     private String genre;
     private String synopsis;
+    private String isbn;
     private boolean available;
 
     public Book() {
@@ -69,5 +70,13 @@ public class Book {
 
     public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
     }
 }
