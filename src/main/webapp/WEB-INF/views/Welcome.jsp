@@ -80,7 +80,10 @@
                             <c:param name="filterBy" value="title"/>
                         </c:url>
                         <a href="${searchUrl}">Search</a>
-                        <a href="#">Borrow</a>
+                        <form method="post" action="${pageContext.request.contextPath}/member/loans/borrow">
+                            <input type="hidden" name="bookId" value="${book.bookId}">
+                            <button type="submit">Borrow</button>
+                        </form>
                         <a href="#">Reserve</a>
                     </td>
                 </tr>
@@ -88,6 +91,7 @@
         </table>
     </div>
 
+    <a class="btn-link" href="${pageContext.request.contextPath}/member/loans">My Loans</a>
     <a class="btn-link" href="${pageContext.request.contextPath}/logout">Log out</a>
 
 </div>
