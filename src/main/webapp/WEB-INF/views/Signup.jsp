@@ -21,6 +21,11 @@
 
     <form action="signup" method="Post">
         <div class="field">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" autocomplete="username" maxlength="50" required>
+        </div>
+
+        <div class="field">
             <label for="firstname">Firstname</label>
             <input type="text" id="firstname" name="firstname" autocomplete="firstname" required>
         </div>
