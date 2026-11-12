@@ -338,3 +338,21 @@ tbody tr:last-child td {
     transform: translateY(-1px);
     box-shadow: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light);
 }
+/* Librarian management uses the existing catalogue styling. */
+.management-page { width: 100%; }
+.management-nav { display: flex; flex-wrap: wrap; gap: 18px; margin-bottom: 28px; }
+.management-nav a, .management-form a { color: var(--accent-dark); }
+.management-page h1 { text-align: left; margin-bottom: 24px; }
+.management-page button { width: auto; padding: 10px 18px; }
+.management-page .btn-link { margin: 0 0 24px; padding: 10px 18px; }
+.management-form { max-width: 640px; }
+.management-form textarea { width: 100%; padding: 12px; border-radius: 12px; font: inherit; }
+.field-error { display: block; color: #a62028; margin-top: 8px; }
+.success-message { padding: 14px; background: #d9f1e2; color: #215b36; border-radius: 12px; }
+.management-page .danger-button { background: #a62028; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+@media (max-width: 640px) {
+    .management-page { padding: 0 0 24px; margin: 16px auto; }
+    .management-page .search-bar form { flex-wrap: wrap; }
+    .management-page .search-bar input { min-width: 0; flex-basis: 100%; }
+}

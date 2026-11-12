@@ -1,6 +1,10 @@
 package bac.ac.libis.service;
 
+import bac.ac.libis.exception.LoanException;
+
 import bac.ac.libis.dao.LoanDao;
+import bac.ac.libis.dao.BookDao;
+import bac.ac.libis.model.Book;
 import bac.ac.libis.model.Loan;
 import java.lang.reflect.Proxy;
 import java.sql.SQLException;
@@ -11,9 +15,9 @@ import java.util.List;
 public class LoanServiceFlowCheck {
     public static void main(String[] args) throws Exception {
         State s = new State(); s.exists = false; rejected(s, "does not exist");
-        s = new State(); s.busy = true; rejected(s, "already on loan");
+        s = new State(); s.busy = true; rejected(s, "\"Test Book\" is already on loan.");
         for (int count : new int[]{3, 4}) {
-            s = new State(); s.count = count; rejected(s, "at most 3");
+            s = new State(); s.count = count; rejected(s, "You already hold the maximum of 3 books. Return a book first.");
         }
         s = new State(); s.count = 2; s.service.borrow(7, 12);
         check(s.created == 1, "third loan allowed");
@@ -47,15 +51,22 @@ public class LoanServiceFlowCheck {
                 LoanDao.class.getClassLoader(), new Class<?>[]{LoanDao.class}, (p, method, args) -> {
                     if (fail) throw new SQLException("Test failure");
                     return switch (method.getName()) {
-                        case "bookExists" -> exists;
                         case "hasOpenLoan" -> busy;
                         case "countOpenLoans" -> count;
                         case "createLoan" -> { check((int)args[0] == 7 && (int)args[1] == 12, "borrow IDs"); created++; yield 15; }
                         case "findOpenLoans" -> { check((int)args[0] == 7, "member isolation"); yield List.of(new Loan(15, 7, 12, null, LocalDate.now(), null)); }
-                        case "markReturned" -> { check((int)args[0] == 15, "return ID"); updated++; yield updateResult; }
+                        case "markReturned" -> { check((int)args[0] == 7 && (int)args[1] == 15, "return member and loan IDs"); updated++; yield updateResult; }
                         case "findHistory" -> List.of();
                         default -> throw new AssertionError(method);
                     };
+                }), (BookDao) Proxy.newProxyInstance(
+                BookDao.class.getClassLoader(), new Class<?>[]{BookDao.class}, (p, method, args) -> {
+                    if (fail) throw new SQLException("Test failure");
+                    check(method.getName().equals("findById") && (int)args[0] == 12, "book lookup");
+                    if (!exists) return null;
+                    Book book = new Book();
+                    book.setTitle("Test Book");
+                    return book;
                 }));
     }
 }

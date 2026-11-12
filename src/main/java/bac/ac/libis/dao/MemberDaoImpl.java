@@ -97,14 +97,15 @@ public class MemberDaoImpl implements MemberDao {
         }
         // Only fixed column names may be included in the SQL.
         String predicate = switch (filterBy == null ? "" : filterBy) {
+            case "name" -> "CONCAT(first_name, ' ', last_name) LIKE ?";
             case "username" -> "username LIKE ?";
             case "email" -> "email LIKE ?";
             case "firstName" -> "first_name LIKE ?";
             case "lastName" -> "last_name LIKE ?";
             case "memberNumber", "member_number" -> "member_number LIKE ?";
-            default -> "username LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR member_number LIKE ?";
+            default -> "username LIKE ? OR first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR member_number LIKE ? OR CONCAT(first_name, ' ', last_name) LIKE ?";
         };
-        int parameterCount = predicate.contains(" OR ") ? 5 : 1;
+        int parameterCount = predicate.contains(" OR ") ? 6 : 1;
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement pst = conn.prepareStatement(SELECT_MEMBERS + " WHERE " + predicate)) {
             String pattern = "%" + term.trim() + "%";
@@ -118,6 +119,36 @@ public class MemberDaoImpl implements MemberDao {
                 }
                 return members;
             }
+        }
+    }
+
+    @Override
+    public boolean update(Member member) throws SQLException {
+        // Omit the password column when blank: the existing credential stays untouched.
+        boolean changePassword = member.getPassword() != null && !member.getPassword().isBlank();
+        String sql = "UPDATE members SET member_number=?, username=?, first_name=?, last_name=?, email=?, phone_number=?"
+                + (changePassword ? ", password=?" : "") + " WHERE member_id=?";
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setString(1, member.getMember_No());
+            pst.setString(2, member.getUsername());
+            pst.setString(3, member.getFirstName());
+            pst.setString(4, member.getLastName());
+            pst.setString(5, member.getEmail());
+            pst.setString(6, member.getPhoneNumber());
+            int index = 7;
+            if (changePassword) pst.setString(index++, member.getPassword());
+            pst.setInt(index, member.getMemberId());
+            return pst.executeUpdate() == 1;
+        }
+    }
+
+    @Override
+    public boolean delete(int memberId) throws SQLException {
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement pst = conn.prepareStatement("DELETE FROM members WHERE member_id=?")) {
+            pst.setInt(1, memberId);
+            return pst.executeUpdate() == 1;
         }
     }
 

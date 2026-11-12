@@ -4,7 +4,7 @@ import bac.ac.libis.dao.MemberDao;
 import bac.ac.libis.dao.MemberDaoImpl;
 import bac.ac.libis.model.Member;
 import bac.ac.libis.service.LoanService;
-import bac.ac.libis.service.LoanException;
+import bac.ac.libis.exception.LoanException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -41,6 +41,7 @@ public class LoanController extends HttpServlet {
             if (member == null) return;
             request.setAttribute("openLoans", loans.findOpenLoans(member.getMemberId()));
             request.setAttribute("loanHistory", loans.findHistory(member.getMemberId()));
+            request.setAttribute("maxLoans", LoanService.MAX_LOANS);
             response.setHeader("Cache-Control", "no-store");
             request.getRequestDispatcher("/WEB-INF/views/MyLoans.jsp").forward(request, response);
         } catch (SQLException e) {
@@ -77,7 +78,7 @@ public class LoanController extends HttpServlet {
             throws SQLException, ServletException, IOException {
         String username = request.getRemoteUser();
         if (username == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+            response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/login"));
             return null;
         }
         Member member = members.findByUsername(username);
@@ -112,7 +113,21 @@ public class LoanController extends HttpServlet {
         response.setStatus(status);
         response.setHeader("Cache-Control", "no-store");
         request.setAttribute("errorMessage", message);
-        request.getRequestDispatcher("/WEB-INF/views/LoanError.jsp").forward(request, response);
+        request.setAttribute("maxLoans", LoanService.MAX_LOANS);
+        request.setAttribute("openLoans", java.util.List.of());
+        request.setAttribute("loanHistory", java.util.List.of());
+        Member member = (Member) request.getAttribute("loggedInMember");
+        if (member != null) {
+            try {
+                request.setAttribute("openLoans", loans.findOpenLoans(member.getMemberId()));
+                request.setAttribute("loanHistory", loans.findHistory(member.getMemberId()));
+            } catch (SQLException e) {
+                getServletContext().log("Database error loading loans after rejection", e);
+                response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+                request.setAttribute("errorMessage", "Unable to load your loans. Please try again later.");
+            }
+        }
+        request.getRequestDispatcher("/WEB-INF/views/MyLoans.jsp").forward(request, response);
     }
 }
 

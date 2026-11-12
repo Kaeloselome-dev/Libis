@@ -4,7 +4,7 @@ import bac.ac.libis.dao.MemberDaoImpl;
 import bac.ac.libis.model.Member;
 import bac.ac.libis.model.Loan;
 import bac.ac.libis.service.LoanService;
-import bac.ac.libis.service.LoanException;
+import bac.ac.libis.exception.LoanException;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,9 +24,11 @@ public class LoanControllerFlowCheck {
         f = new Flow(); f.path = "/member/loans";
         f.controller.doGet(f.request, f.response);
         check(f.attributes.containsKey("openLoans") && f.attributes.containsKey("loanHistory"), "page data");
+        check(Integer.valueOf(LoanService.MAX_LOANS).equals(f.attributes.get("maxLoans")), "service limit exposed");
         f = new Flow(); f.reject = true;
         f.controller.doPost(f.request, f.response);
         check(f.status == 400 && "Service rejected request".equals(f.attributes.get("errorMessage")), "service error");
+        check("/WEB-INF/views/MyLoans.jsp".equals(f.forwarded) && f.attributes.containsKey("openLoans") && f.attributes.containsKey("loanHistory"), "rejection redisplays loans page");
         f = new Flow(); f.username = null;
         f.controller.doPost(f.request, f.response);
         check(f.memberId == 0 && "/libis/login".equals(f.redirect), "anonymous request");
@@ -40,6 +42,7 @@ public class LoanControllerFlowCheck {
     }
     static void check(boolean ok, String message) { if (!ok) throw new AssertionError(message); }
     static class Flow {
+        String forwarded;
         String username = "reader", path = "/member/loans/borrow", id = "12", redirect;
         int memberId, targetId, status;
         boolean returned, reject, missing;
@@ -50,11 +53,13 @@ public class LoanControllerFlowCheck {
             case "getContextPath" -> "/libis";
             case "getParameter" -> id;
             case "setCharacterEncoding" -> null;
+            case "getAttribute" -> attributes.get((String)a[0]);
             case "setAttribute" -> { attributes.put((String)a[0], a[1]); yield null; }
-            case "getRequestDispatcher" -> proxy(RequestDispatcher.class, (name, values) -> null);
+            case "getRequestDispatcher" -> { forwarded = (String)a[0]; yield proxy(RequestDispatcher.class, (name, values) -> null); }
             default -> throw new AssertionError(method);
         });
         HttpServletResponse response = proxy(HttpServletResponse.class, (method, a) -> {
+            if ("encodeRedirectURL".equals(method)) return a[0];
             switch(method) {
                 case "sendRedirect": redirect = (String)a[0]; break;
                 case "setStatus": case "sendError": status = (int)a[0]; break;

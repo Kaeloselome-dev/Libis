@@ -2,6 +2,7 @@ package bac.ac.libis.dao;
 
 import bac.ac.libis.config.DatabaseConfig;
 import bac.ac.libis.model.Loan;
+import bac.ac.libis.model.Book;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -13,20 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoanDaoimpl implements LoanDao {
-    @Override
-    public boolean bookExists(int bookId) throws SQLException {
-        try (Connection conn = DatabaseConfig.getConnection();
-             PreparedStatement pst = conn.prepareStatement("SELECT 1 FROM books WHERE book_id = ?")) {
-            pst.setInt(1, bookId);
-            try (ResultSet rs = pst.executeQuery()) {
-                return rs.next();
-            }
-        }
-    }
-
     private static final String SELECT_LOANS = """
-            SELECT loan_id, member_id, book_id, borrowed_on, returned_on
-            FROM loans
+            SELECT l.loan_id, l.member_id, l.book_id, l.borrowed_on, l.returned_on,
+                   b.title, b.author
+            FROM loans l JOIN books b ON b.book_id = l.book_id
             """;
 
     @Override
@@ -52,21 +43,22 @@ public class LoanDaoimpl implements LoanDao {
     }
 
     @Override
-    public boolean markReturned(int loanId) throws SQLException {
+    public boolean markReturned(int memberId, int loanId) throws SQLException {
         String sql = """
                 UPDATE loans SET returned_on = CURRENT_DATE
-                WHERE loan_id = ? AND returned_on IS NULL
+                WHERE loan_id = ? AND member_id = ? AND returned_on IS NULL
                 """;
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
             pst.setInt(1, loanId);
+            pst.setInt(2, memberId);
             return pst.executeUpdate() == 1;
         }
     }
 
     @Override
     public int countOpenLoans(int memberId) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM loans WHERE member_id = ? AND returned_on IS NULL";
+        String sql = "SELECT COUNT(*) FROM loans l WHERE l.member_id = ? AND l.returned_on IS NULL";
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement pst = conn.prepareStatement(sql)) {
             pst.setInt(1, memberId);
@@ -80,7 +72,7 @@ public class LoanDaoimpl implements LoanDao {
     @Override
     public List<Loan> findOpenLoans(int memberId) throws SQLException {
         return findLoans(SELECT_LOANS + """
-                 WHERE member_id = ? AND returned_on IS NULL
+                 WHERE l.member_id = ? AND l.returned_on IS NULL
                  ORDER BY borrowed_on DESC, loan_id DESC
                 """, memberId);
     }
@@ -88,7 +80,7 @@ public class LoanDaoimpl implements LoanDao {
     @Override
     public List<Loan> findHistory(int memberId) throws SQLException {
         return findLoans(SELECT_LOANS + """
-                 WHERE member_id = ? AND returned_on IS NOT NULL
+                 WHERE l.member_id = ? AND l.returned_on IS NOT NULL
                  ORDER BY returned_on DESC, loan_id DESC
                 """, memberId);
     }
@@ -112,12 +104,16 @@ public class LoanDaoimpl implements LoanDao {
             try (ResultSet rs = pst.executeQuery()) {
                 List<Loan> loans = new ArrayList<>();
                 while (rs.next()) {
+                    Book book = new Book();
+                    book.setBookId(rs.getInt("book_id"));
+                    book.setTitle(rs.getString("title"));
+                    book.setAuthor(rs.getString("author"));
                     Date returnedOn = rs.getDate("returned_on");
                     loans.add(new Loan(
                             rs.getInt("loan_id"),
                             rs.getInt("member_id"),
                             rs.getInt("book_id"),
-                            null,
+                            book,
                             rs.getDate("borrowed_on").toLocalDate(),
                             returnedOn == null ? null : returnedOn.toLocalDate()));
                 }

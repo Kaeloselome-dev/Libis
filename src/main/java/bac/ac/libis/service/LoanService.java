@@ -1,5 +1,10 @@
 package bac.ac.libis.service;
 
+import bac.ac.libis.exception.LoanException;
+
+import bac.ac.libis.dao.BookDao;
+import bac.ac.libis.dao.BookDaoimpl;
+import bac.ac.libis.model.Book;
 import bac.ac.libis.dao.LoanDao;
 import bac.ac.libis.dao.LoanDaoimpl;
 import bac.ac.libis.model.Loan;
@@ -10,24 +15,27 @@ import java.util.List;
 public class LoanService {
     public static final int MAX_LOANS = 3;
     private final LoanDao loans;
+    private final BookDao books;
 
     public LoanService() {
-        this(new LoanDaoimpl());
+        this(new LoanDaoimpl(), new BookDaoimpl());
     }
 
-    public LoanService(LoanDao loans) {
+    public LoanService(LoanDao loans, BookDao books) {
         this.loans = loans;
+        this.books = books;
     }
 
     public void borrow(int memberId, int bookId) throws SQLException, LoanException {
-        if (!loans.bookExists(bookId)) {
+        Book book = books.findById(bookId);
+        if (book == null) {
             throw new LoanException("This book does not exist.");
         }
         if (loans.hasOpenLoan(bookId)) {
-            throw new LoanException("This book is already on loan.");
+            throw new LoanException("\"" + book.getTitle() + "\" is already on loan.");
         }
         if (loans.countOpenLoans(memberId) >= MAX_LOANS) {
-            throw new LoanException("You may have at most " + MAX_LOANS + " open loans.");
+            throw new LoanException("You already hold the maximum of " + MAX_LOANS + " books. Return a book first.");
         }
         loans.createLoan(memberId, bookId);
     }
@@ -38,7 +46,7 @@ public class LoanService {
         if (!owned) {
             throw new LoanException("You do not have an open loan with that ID.");
         }
-        if (!loans.markReturned(loanId)) {
+        if (!loans.markReturned(memberId, loanId)) {
             throw new LoanException("This loan has already been returned.");
         }
     }

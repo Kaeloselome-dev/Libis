@@ -32,7 +32,8 @@ CREATE TABLE books (
                        title VARCHAR(150) NOT NULL,
                        author VARCHAR(100) NOT NULL,
                        genre VARCHAR(50) NOT NULL,
-                       synopsis TEXT NULL
+                       synopsis TEXT NULL,
+                       publication_year INT NULL
 );
 
 -- =====================================

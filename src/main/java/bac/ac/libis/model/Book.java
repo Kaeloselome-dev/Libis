@@ -9,6 +9,10 @@ public class Book {
     private String synopsis;
     private String isbn;
     private boolean available;
+    private Integer publicationYear;
+
+    public Integer getPublicationYear() { return publicationYear; }
+    public void setPublicationYear(Integer publicationYear) { this.publicationYear = publicationYear; }
 
     public Book() {
     }

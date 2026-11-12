@@ -12,5 +12,7 @@ public interface MemberDao {
     Member findByMemberNumber(String memberNumber) throws SQLException;
     List<Member> findAll() throws SQLException;
     List<Member> search(String term, String filterBy) throws SQLException;
+    boolean update(Member member) throws SQLException;
+    boolean delete(int memberId) throws SQLException;
     boolean registerMember(Member member) throws SQLException;
 }
